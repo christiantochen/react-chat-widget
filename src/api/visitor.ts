@@ -7,7 +7,7 @@ export const init = (body: {
   _referrer: string
   _goid?: number
 }) =>
-  fetcher<{ _goid: number }>('/visitor/api/init/').setConfig(Config).post(body)
+  fetcher<{ _goid: number }>('visitor/api/init/').setConfig(Config).post(body)
 
 export const register = (body: {
   _goid: number
@@ -19,13 +19,13 @@ export const register = (body: {
   email?: string
   mobile_no?: string
 }) =>
-  fetcher('/visitor/api/register/')
-    .setParams({ visitor_id: Cookies.get('visitor_id') })
+  fetcher<{ visitor_id: number }>('visitor/api/register/')
     .setConfig(Config)
+    .setParams({ visitor_id: Cookies.get('visitor_id') })
     .post(body)
 
 export const logEvent = (name: string, data: any) =>
-  fetcher('/visitor/api/log_event/')
+  fetcher('visitor/api/log_event/')
     .setConfig(Config)
     .setParams({ visitor_id: Cookies.get('visitor_id') })
     .post({

@@ -2,10 +2,10 @@ import cn from 'clsx'
 import _ from 'lodash'
 import moment from 'moment'
 import { FC, useEffect, useRef, useState } from 'react'
-import { useChat } from './chatContext'
+import { useChat } from './context'
 import { Message } from './lib/types'
 
-const ChatView: FC = () => {
+const ChatView: FC<{ className?: string }> = ({ className }) => {
   const {
     isConnected,
     messages,
@@ -103,7 +103,7 @@ const ChatView: FC = () => {
           type: 'event',
           event_date: queued_at,
           text: `Transfered to ${conversation.queue.name} at ${queued_at.format(
-            'ddd, D MMM YYYY HH:mm'
+            'LLLL'
           )}`,
         })
       }
@@ -116,9 +116,7 @@ const ChatView: FC = () => {
           id: events.length + 1,
           type: 'event',
           event_date: assigned_at,
-          text: `Assigned to ${assigned_to} at ${assigned_at.format(
-            'ddd, D MMM YYYY HH:mm'
-          )}`,
+          text: `Assigned to ${assigned_to} at ${assigned_at.format('LLLL')}`,
         })
       }
       if (conversation.closed_at) {
@@ -132,9 +130,7 @@ const ChatView: FC = () => {
           id: events.length + 1,
           type: 'event',
           event_date: closed_at,
-          text: `Ended by ${closed_by} at ${closed_at.format(
-            'ddd, D MMM YYYY HH:mm'
-          )}}`,
+          text: `Ended by ${closed_by} at ${closed_at.format('LLLL')}}`,
         })
       }
       if (conversation.last_message) {
@@ -202,8 +198,9 @@ const ChatView: FC = () => {
   return (
     <div
       className={cn(
-        'fixed top-4 right-4 bottom-24 left-1/3 rounded-lg shadow-lg bg-white',
-        'flex flex-col'
+        'fixed right-4 left-1/2 rounded-lg shadow-lg bg-white',
+        'flex flex-col',
+        className
       )}
     >
       {/* Head */}

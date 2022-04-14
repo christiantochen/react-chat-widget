@@ -1,7 +1,7 @@
 import Cookies from 'js-cookie'
 import React, { FC, useEffect, useMemo } from 'react'
-import { init, logEvent, register } from './api'
-import Config from './config'
+import { init, logEvent, register } from '../api'
+import Config from '../config'
 
 interface State {
   _goid?: string

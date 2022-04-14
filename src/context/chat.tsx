@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import Config from './config'
+import Config from '../config'
 import {
   getConversations,
   getConversationMessages,
@@ -8,9 +8,9 @@ import {
   startTyping,
   markAsRead,
   newConversation,
-} from './api'
-import { Conversation, Message } from './lib/types'
-import { useVisitor } from './visitorContext'
+} from '../api'
+import { Conversation, Message } from '../lib/types'
+import { useVisitor } from './visitor'
 
 type State = {
   socket?: WebSocket
