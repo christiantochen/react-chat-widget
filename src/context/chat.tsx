@@ -11,6 +11,7 @@ import {
 } from '../api'
 import { Conversation, Message } from '../lib/types'
 import { useVisitor } from './visitor'
+import Cookies from 'js-cookie'
 
 type State = {
   socket?: WebSocket
@@ -168,11 +169,14 @@ function reducer(state: State, action: Action) {
 
 export const ChatProvider: FC<{
   token?: string | null
-}> = ({ token, ...props }): JSX.Element => {
+  business_id?: string | number | null
+}> = ({ token, business_id, ...props }): JSX.Element => {
   const [state, dispatch] = React.useReducer(reducer, initialState)
   const { visitor_id } = useVisitor()
   const [reconnectingInterval, setReconnectingInterval] =
     useState<NodeJS.Timeout>()
+
+  if (business_id) Cookies.set('business_id', business_id.toString())
 
   const sendMessage = (
     conversationKey: number,
