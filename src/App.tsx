@@ -6,7 +6,7 @@ import { VisitorProvider } from './context'
 
 function App({ element }: { element: Element }) {
   const token = element.getAttribute('data-token')
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState<Boolean | undefined>()
 
   return (
     <VisitorProvider>
@@ -19,9 +19,13 @@ function App({ element }: { element: Element }) {
         <div className={cn('fixed right-4 bottom-4 z-1000', 'flex flex-col')}>
           <ChatView
             className={cn({
-              'animate-slidein': isOpen,
-              'animate-slideout': !isOpen,
+              'animate-slidein': typeof isOpen !== 'undefined' && isOpen,
+              'animate-slideout': typeof isOpen !== 'undefined' && !isOpen,
             })}
+            style={{
+              top: '100%',
+              bottom: '-100%',
+            }}
           />
           <div
             className={cn(

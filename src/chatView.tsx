@@ -1,11 +1,14 @@
 import cn from 'clsx'
 import _ from 'lodash'
 import moment from 'moment'
-import { FC, useEffect, useRef, useState } from 'react'
+import React, { FC, useEffect, useRef, useState } from 'react'
 import { useChat } from './context'
 import { Message } from './lib/types'
 
-const ChatView: FC<{ className?: string }> = ({ className }) => {
+const ChatView: FC<{ className?: string; style?: React.CSSProperties }> = ({
+  className,
+  style,
+}) => {
   const {
     isConnected,
     messages,
@@ -202,6 +205,7 @@ const ChatView: FC<{ className?: string }> = ({ className }) => {
         'flex flex-col',
         className
       )}
+      style={style}
     >
       {/* Head */}
       <div
