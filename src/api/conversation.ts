@@ -33,7 +33,7 @@ export const getConversationMessages = (
     })
 
 export const newConversation = () =>
-  fetcher(`conversation/api/conversation/`)
+  fetcher(`conversation/api/conversation/start/`)
     .setConfig(Config)
     .setCookies(Cookies.get())
     .setParams({ visitor: Cookies.get('visitor_id') })

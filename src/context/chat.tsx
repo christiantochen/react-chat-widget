@@ -167,16 +167,13 @@ function reducer(state: State, action: Action) {
   }
 }
 
-export const ChatProvider: FC<{
-  token?: string | null
-  business_id?: string | number | null
-}> = ({ token, business_id, ...props }): JSX.Element => {
+export const ChatProvider: FC = ({ ...props }): JSX.Element => {
   const [state, dispatch] = React.useReducer(reducer, initialState)
   const { visitor_id } = useVisitor()
   const [reconnectingInterval, setReconnectingInterval] =
     useState<NodeJS.Timeout>()
 
-  if (business_id) Cookies.set('business_id', business_id.toString())
+  // if (business_id) Cookies.set('business_id', business_id.toString())
 
   const sendMessage = (
     conversationKey: number,
@@ -208,7 +205,7 @@ export const ChatProvider: FC<{
   )
 
   const initializeSocket = useCallback(async () => {
-    if (visitor_id && token) {
+    if (visitor_id) {
       const conversations = (await getConversations()).data
       const conversation =
         conversations && conversations.length > 0 ? conversations[0] : undefined
@@ -221,8 +218,6 @@ export const ChatProvider: FC<{
         .concat(`&api_key=${Config.API_KEY}`)
         .replace('http://', 'ws://')
         .replace('https://', 'wss://')
-
-      if (token) url = url.concat(`&token=${token}`)
 
       const socket = new WebSocket(url)
 
@@ -265,7 +260,7 @@ export const ChatProvider: FC<{
         messages,
       })
     }
-  }, [visitor_id, token])
+  }, [visitor_id])
 
   useEffect(() => {
     initializeSocket()
