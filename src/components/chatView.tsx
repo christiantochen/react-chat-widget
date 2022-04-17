@@ -6,8 +6,15 @@ import getEventsByConversation from '../utils/getEventsByConversation'
 import { useChat } from '../context'
 import ChatBody from './ChatBody'
 import ChatHeader from './ChatHeader'
-import getStatusByMessage from 'src/utils/getStatusByMessage'
-import isSameStatusByMessage from 'src/utils/isSameStatusByMessage'
+import getStatusByMessage from '../utils/getStatusByMessage'
+import isSameStatusByMessage from '../utils/isSameStatusByMessage'
+
+type ChatEvent = {
+  id: number
+  type: 'event' | 'date'
+  event_date: moment.Moment
+  text: string
+}
 
 const ChatView: FC<{ className?: string; style?: React.CSSProperties }> = ({
   className,
@@ -29,14 +36,8 @@ const ChatView: FC<{ className?: string; style?: React.CSSProperties }> = ({
   const [agentTypingAtTimeout, setAgentTypingAtTimeout] =
     useState<NodeJS.Timeout>()
   const [chat, setChat] = useState<string>('')
-  const [chatEvents, setChatEvent] = useState<
-    Array<{
-      id: number
-      type: 'event' | 'date'
-      event_date: moment.Moment
-      text: string
-    }>
-  >([])
+  const [chatEvents, setChatEvent] = useState<Array<ChatEvent>>([])
+  let chatEventAlreadyInAction = [] as Array<ChatEvent>
 
   // first time load keep scrolling to the (n-1)th element.
   // HACK: setTimeout solve this issue.
@@ -66,7 +67,6 @@ const ChatView: FC<{ className?: string; style?: React.CSSProperties }> = ({
     scrollToBottom()
   }, [pendingMessages])
 
-  // setup agent typing event
   useEffect(() => {
     if (conversation) {
       const parties = conversation.parties.filter((party: any) =>
@@ -94,15 +94,15 @@ const ChatView: FC<{ className?: string; style?: React.CSSProperties }> = ({
     }
   }, [conversation])
 
-  // Setup Events
   useEffect(() => {
     if (conversation) {
       setChatEvent(getEventsByConversation(conversation))
-    }
-  }, [conversation])
 
-  // Setup onfocus
-  useEffect(() => {
+      if (conversation.new_count > 0 && !document.hidden) {
+        markAsRead(conversation.uid)
+      }
+    }
+
     window.onfocus = () => {
       console.log('onfocus:conversation:new_count', conversation?.new_count)
       if (conversation && conversation.new_count > 0) {
@@ -110,20 +110,6 @@ const ChatView: FC<{ className?: string; style?: React.CSSProperties }> = ({
       }
     }
   }, [conversation])
-
-  // Setup onfocus
-  useEffect(() => {
-    if (conversation && conversation.new_count > 0 && !document.hidden) {
-      markAsRead(conversation.uid)
-    }
-  }, [conversation])
-
-  let chatEventAlreadyInAction = [] as Array<{
-    id: number
-    type: 'event' | 'date'
-    event_date: moment.Moment
-    text: string
-  }>
 
   return (
     <div
@@ -164,14 +150,13 @@ const ChatView: FC<{ className?: string; style?: React.CSSProperties }> = ({
                 .duration(moment(nextMessage.created_at).diff(chat.created_at))
                 .asMinutes() <= 1
 
-            const events = _.xorBy(
+            chatEventAlreadyInAction = _.xorBy(
               chatEvents.filter((chatEvent) =>
                 chatEvent.event_date.isBefore(moment(chat.created_at))
               ),
               chatEventAlreadyInAction,
               'id'
             )
-            chatEventAlreadyInAction = [...chatEventAlreadyInAction, ...events]
 
             return (
               <ChatBody
@@ -179,7 +164,7 @@ const ChatView: FC<{ className?: string; style?: React.CSSProperties }> = ({
                 isSelf={isSelf}
                 groupWithPrevious={groupWithPrevious}
                 groupWithNext={groupWithNext}
-                events={events}
+                events={chatEventAlreadyInAction}
                 body={chat.body}
                 status={getStatusByMessage(chat)}
                 sent_at={chat.sent_at}

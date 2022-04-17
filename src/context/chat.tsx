@@ -11,7 +11,6 @@ import {
 } from '../api'
 import { Conversation, Message } from '../lib/types'
 import { useVisitor } from './visitor'
-import Cookies from 'js-cookie'
 
 type State = {
   socket?: WebSocket
