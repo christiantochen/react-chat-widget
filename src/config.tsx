@@ -6,7 +6,7 @@ export type ConfigType = {
 
 const Config: ConfigType = {
   API_URL: 'https://api.dev.goapp.co.id/v1',
-  IS_PRODUCTION: process.env.NODE_ENV === 'production',
+  IS_PRODUCTION: process.env.NODE_ENV === 'production'
 }
 
 export const setConfig = (apiKey: string | null) => {

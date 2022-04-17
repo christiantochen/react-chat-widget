@@ -5,7 +5,7 @@ const getEventsByConversation = (conversation: Conversation) => {
   const events = [] as Array<{
     id: number
     type: 'event' | 'date'
-    event_date: moment.Moment
+    eventDate: moment.Moment
     text: string
   }>
 
@@ -14,19 +14,19 @@ const getEventsByConversation = (conversation: Conversation) => {
     events.push({
       id: events.length + 1,
       type: 'date',
-      event_date: created_at,
+      eventDate: created_at,
       text: moment().isSame(created_at, 'day')
         ? 'Today'
-        : created_at.format('ddd, D MMM YYYY'),
+        : created_at.format('ddd, D MMM YYYY')
     })
     events.push({
       id: events.length + 1,
       type: 'event',
-      event_date: created_at,
+      eventDate: created_at,
       text: `Started ${`By 
       ${conversation.initiated_by.contact.first_name || 'You'} 
       ${conversation.initiated_by.contact.last_name || ''}
-      `} at ${moment(conversation.created_at).format('LLLL')}`,
+      `} at ${moment(conversation.created_at).format('LLLL')}`
     })
   }
   if (conversation.queued_at) {
@@ -34,10 +34,10 @@ const getEventsByConversation = (conversation: Conversation) => {
     events.push({
       id: events.length + 1,
       type: 'event',
-      event_date: queued_at,
+      eventDate: queued_at,
       text: `Transfered to ${conversation.queue.name} at ${queued_at.format(
         'LLLL'
-      )}`,
+      )}`
     })
   }
   if (conversation.assigned_at) {
@@ -48,8 +48,8 @@ const getEventsByConversation = (conversation: Conversation) => {
     events.push({
       id: events.length + 1,
       type: 'event',
-      event_date: assigned_at,
-      text: `Assigned to ${assigned_to} at ${assigned_at.format('LLLL')}`,
+      eventDate: assigned_at,
+      text: `Assigned to ${assigned_to} at ${assigned_at.format('LLLL')}`
     })
   }
   if (conversation.closed_at) {
@@ -62,8 +62,8 @@ const getEventsByConversation = (conversation: Conversation) => {
     events.push({
       id: events.length + 1,
       type: 'event',
-      event_date: closed_at,
-      text: `Ended by ${closed_by} at ${closed_at.format('LLLL')}}`,
+      eventDate: closed_at,
+      text: `Ended by ${closed_by} at ${closed_at.format('LLLL')}}`
     })
   }
   if (conversation.last_message) {
@@ -85,10 +85,10 @@ const getEventsByConversation = (conversation: Conversation) => {
         events.push({
           id: events.length + 1,
           type: 'date',
-          event_date: day_at,
+          eventDate: day_at,
           text: moment().isSame(day_at, 'day')
             ? 'Today'
-            : day_at.format('ddd, D MMM YYYY'),
+            : day_at.format('ddd, D MMM YYYY')
         })
       })
   }

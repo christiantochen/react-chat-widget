@@ -1,19 +1,27 @@
+export * from './api'
+export * from './components'
+
 import './assets/main.css'
 import './assets/chrome-bug.css'
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import App from './App'
+import { ChatProvider, VisitorProvider } from './context'
+import { setConfig } from './config'
+import { ChatWidget } from './components'
 
-// Find all widget divs
-const WidgetDivs = document.querySelectorAll('.react-chat-widget')
+const chatWidgetElement = document.querySelector('.react-chat-widget')
 
-// Inject our React App into each
-WidgetDivs.forEach((div) => {
+if (chatWidgetElement) {
+  setConfig(chatWidgetElement.getAttribute('data-api-key'))
   ReactDOM.render(
     <React.StrictMode>
-      <App element={div} />
+      <VisitorProvider>
+        <ChatProvider>
+          <ChatWidget />
+        </ChatProvider>
+      </VisitorProvider>
     </React.StrictMode>,
-    div
+    chatWidgetElement
   )
-})
+}

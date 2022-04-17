@@ -1,24 +1,32 @@
 {
   "parser": "@typescript-eslint/parser",
-  "extends": ["prettier"],
-  "plugins": ["react"],
-  // "parserOptions": {
-  // "ecmaVersion": 2020, // Allows for the parsing of modern ECMAScript features
-  // "sourceType": "module", // Allows for the use of imports
-  // "project": "./tsconfig.json",
-  // "tsconfigRootDir": "./"
-  // },
-  "rules": {
-    "no-unused-vars": "warn",
-    "react/no-unescaped-entities": "off"
-  },
-  "overrides": [
-    {
-      "files": ["*.ts", "*.tsx"],
-      "rules": {
-        "no-undef": "off"
-      }
-    }
+  "extends": [
+    "plugin:prettier/recommended",
+    "prettier/standard",
+    "prettier/react",
+    "plugin:@typescript-eslint/eslint-recommended"
   ],
-  "settings": {}
+  "env": {
+    "node": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "ecmaFeatures": {
+      "legacyDecorators": true,
+      "jsx": true
+    }
+  },
+  "settings": {
+    "react": {
+      "version": "17"
+    }
+  },
+  "rules": {
+    "space-before-function-paren": 0,
+    "react/prop-types": 0,
+    "react/jsx-handler-names": 0,
+    "react/jsx-fragments": 0,
+    "react/no-unused-prop-types": 0,
+    "import/export": 0
+  }
 }

@@ -1,3 +1,10 @@
+export type FetcherResponse<T = any, E = any> = {
+  ok: boolean
+  status: number
+  data: T
+  error: E
+}
+
 const withQueryString = (url: RequestInfo, params?: any) => {
   if (!params) return url
   const keys = Object.keys(params)
@@ -16,7 +23,7 @@ const withCookies = (cookies: any, options?: any) => {
   if (!cookies) return options
 
   const { token, business_uid } = cookies
-  let headers = options?.headers || {}
+  const headers = options?.headers || {}
 
   if (token) headers['Authorization'] = `Jwt ${token}`
   if (business_uid) headers['X-Service-Key'] = business_uid
@@ -45,7 +52,7 @@ async function errorParser<T = any, E = any>(
     ok: false,
     status: 500,
     data: undefined as never,
-    error: e.message as E,
+    error: e.message as E
   }
 }
 
@@ -54,13 +61,13 @@ function request<T = any, E = any>(
   options?: RequestInit,
   config?: any
 ) {
-  let requestOptions: any = {
+  const requestOptions: any = {
     ...options,
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      ...options?.headers,
-    },
+      ...options?.headers
+    }
   }
 
   if (config?.API_KEY) {
@@ -116,15 +123,8 @@ function fetcherWithCookiesParams<T = any, E = any>(
         withQueryString(url, params),
         withCookies(cookies, { ...options, method: 'DELETE' }),
         config
-      ),
+      )
   }
-}
-
-export type FetcherResponse<T = any, E = any> = {
-  ok: boolean
-  status: number
-  data: T
-  error: E
 }
 
 export default function fetcher<T = any, E = any>(
@@ -135,19 +135,19 @@ export default function fetcher<T = any, E = any>(
     fetcher<T, E>(url, {
       cookies,
       params: options?.params,
-      config: options?.config,
+      config: options?.config
     })
   const setConfig = (config: any) =>
     fetcher<T, E>(url, {
       cookies: options?.cookies,
       params: options?.params,
-      config,
+      config
     })
   const setParams = (params: any) =>
     fetcher<T, E>(url, {
       cookies: options?.cookies,
       params,
-      config: options?.config,
+      config: options?.config
     })
 
   return {
@@ -159,10 +159,10 @@ export default function fetcher<T = any, E = any>(
       options?.cookies,
       {
         visitor: options?.cookies?.visitor_id,
-        ...options?.params,
+        ...options?.params
       },
       options?.config
-    ),
+    )
   }
 }
 

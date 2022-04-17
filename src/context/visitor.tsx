@@ -1,20 +1,18 @@
-import Cookies from 'js-cookie'
 import React, { FC, useEffect, useMemo } from 'react'
-import { init, logEvent, register } from '../api'
-import Config from '../config'
+import { init, logEvent as logEventApi, register } from '../api'
 
 interface State {
-  _goid?: string
-  visitor_id?: string
+  _goid?: number
+  visitor_id?: number
   // eslint-disable-next-line no-unused-vars
   logEvent: (name: string, data: any) => Promise<any>
 }
 
 const initialState = {
-  _goid: Cookies.get('_goid'),
-  visitor_id: Cookies.get('visitor_id'),
+  _goid: undefined,
+  visitor_id: undefined,
   // eslint-disable-next-line no-unused-vars
-  logEvent: (name: string, data: any) => Promise.resolve({}),
+  logEvent: (name: string, data: any) => Promise.resolve({})
 }
 
 type Action =
@@ -28,25 +26,15 @@ function visitorReducer(state: State, action: Action) {
   console.log(action)
   switch (action.type) {
     case 'SET_GOID': {
-      if (action.value)
-        Cookies.set('_goid', action.value.toString(), {
-          secure: Config.IS_PRODUCTION,
-        })
-
       return {
         ...state,
-        _goid: action.value?.toString(),
+        _goid: action.value
       }
     }
     case 'SET_VISITOR_ID': {
-      if (action.value)
-        Cookies.set('visitor_id', action.value.toString(), {
-          secure: Config.IS_PRODUCTION,
-        })
-
       return {
         ...state,
-        visitor_id: action.value?.toString(),
+        visitor_id: action.value
       }
     }
   }
@@ -55,10 +43,13 @@ function visitorReducer(state: State, action: Action) {
 export const VisitorProvider: FC = (props): JSX.Element => {
   const [state, dispatch] = React.useReducer(visitorReducer, initialState)
 
+  const logEvent = (name: string, data: any) =>
+    logEventApi({ name, data }, { visitor_id: state.visitor_id })
+
   const memoValue = useMemo(
     () => ({
       ...state,
-      logEvent,
+      logEvent
     }),
     [state]
   )
@@ -66,11 +57,11 @@ export const VisitorProvider: FC = (props): JSX.Element => {
   useEffect(() => {
     const visitor = {
       _referrer: document.referrer,
-      _origin: window.location.href,
+      _origin: window.location.href
     }
 
     if (state._goid) {
-      Object.assign(visitor, { _goid: parseInt(state._goid) })
+      Object.assign(visitor, { _goid: state._goid })
     }
 
     init(visitor).then(
@@ -80,11 +71,9 @@ export const VisitorProvider: FC = (props): JSX.Element => {
 
   useEffect(() => {
     if (state._goid) {
-      const visitor = {
-        _goid: parseInt(state._goid),
-      }
+      const visitor = { _goid: state._goid }
 
-      register(visitor).then(
+      register(visitor, { visitor_id: state.visitor_id }).then(
         ({ ok, data }) =>
           ok && dispatch({ type: 'SET_VISITOR_ID', value: data.visitor_id })
       )

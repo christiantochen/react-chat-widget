@@ -1,33 +1,33 @@
 module.exports = {
-  content: ['./src/**/*.{js,ts,jsx,tsx}'],
+  content: ['./src/**/*.{js,ts,jsx,tsx}', './widget/**/*.{js,ts,jsx,tsx}'],
   safelist: ['outline-none'],
   theme: {
     extend: {
       animation: {
         slidein: 'slidein 0.5s forwards',
-        slideout: 'slideout 0.5s forwards',
+        slideout: 'slideout 0.5s forwards'
       },
       keyframes: {
         slidein: {
-          '0%': { opacity: '0', 'top': '100%', bottom: '-100%' },
-          '25%': { opacity: '0', 'top': '3rem', bottom: '4rem' },
-          '100%': { opacity: '1', 'top': '1rem', bottom: '6rem' },
+          '0%': { opacity: '0', top: '100%', bottom: '-100%' },
+          '25%': { opacity: '0', top: '3rem', bottom: '4rem' },
+          '100%': { opacity: '1', top: '1rem', bottom: '6rem' }
         },
         slideout: {
-          '0%': { opacity: '1', 'top': '1rem', bottom: '6rem' },
-          '75%': { opacity: '0', 'top': '3rem', bottom: '4rem' },
-          '100%': { opacity: '0', 'top': '100%', bottom: '-100%' },
-        },
+          '0%': { opacity: '1', top: '1rem', bottom: '6rem' },
+          '75%': { opacity: '0', top: '3rem', bottom: '4rem' },
+          '100%': { opacity: '0', top: '100%', bottom: '-100%' }
+        }
       },
       fontSize: {
-        '2xs': '.625rem',
+        '2xs': '.625rem'
       },
       maxWidth: {
         'page-sm': '600px',
         'page-md': '728px',
         'page-lg': '984px',
         'page-xl': '1160px',
-        'page-2xl': '1416px',
+        'page-2xl': '1416px'
       },
       colors: {
         primary: 'var(--primary)',
@@ -46,17 +46,17 @@ module.exports = {
         'accent-6': 'var(--accent-6)',
         'accent-7': 'var(--accent-7)',
         'accent-8': 'var(--accent-8)',
-        'accent-9': 'var(--accent-9)',
+        'accent-9': 'var(--accent-9)'
       },
       textColor: {
         primary: 'var(--text-primary)',
-        secondary: 'var(--text-secondary)',
+        secondary: 'var(--text-secondary)'
       },
       boxShadow: {
         'outline-normal': '0 0 0 2px var(--accent-2)',
         magical:
-          'rgba(0, 0, 0, 0.02) 0px 30px 30px, rgba(0, 0, 0, 0.03) 0px 0px 8px, rgba(0, 0, 0, 0.05) 0px 1px 0px',
-      },
-    },
-  },
+          'rgba(0, 0, 0, 0.02) 0px 30px 30px, rgba(0, 0, 0, 0.03) 0px 0px 8px, rgba(0, 0, 0, 0.05) 0px 1px 0px'
+      }
+    }
+  }
 }

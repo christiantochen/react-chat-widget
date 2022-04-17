@@ -19,6 +19,6 @@
     "jsxImportSource": "react",
     "paths": {}
   },
-  "include": ["**/*.d.ts", "**/*.ts", "**/*.tsx", "**/*.js"],
-  "exclude": ["node_modules"]
+  "include": ["src", "widget"],
+  "exclude": ["node_modules", "dist", "build"]
 }

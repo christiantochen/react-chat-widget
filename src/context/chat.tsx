@@ -2,12 +2,12 @@ import _ from 'lodash'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import Config from '../config'
 import {
-  getConversations,
-  getConversationMessages,
+  getConversations as getConversationsApi,
+  getConversationMessages as getConversationMessagesApi,
   sendMessage as sendMessageApi,
-  startTyping,
-  markAsRead,
-  newConversation,
+  startTyping as startTypingApi,
+  markAsRead as markAsReadApi,
+  newConversation as newConversationApi
 } from '../api'
 import { Conversation, Message } from '../lib/types'
 import { useVisitor } from './visitor'
@@ -54,7 +54,7 @@ const initialState: State = {
   startTyping: (conversationKey: number) => Promise.resolve({}),
   // eslint-disable-next-line no-unused-vars
   markAsRead: (conversationKey: number) => Promise.resolve({}),
-  newConversation: () => Promise.resolve({}),
+  newConversation: () => Promise.resolve({})
 }
 
 export const ChatContext = React.createContext<State>(initialState)
@@ -102,7 +102,7 @@ function reducer(state: State, action: Action) {
         conversation: action.conversation,
         messages: _.values(
           _.merge(_.keyBy(state.messages, 'id'), _.keyBy(action.messages, 'id'))
-        ),
+        )
       }
     }
     case 'CLIENT_STATE_ON_CHANGE': {
@@ -116,7 +116,7 @@ function reducer(state: State, action: Action) {
         ),
         pendingMessages: state.pendingMessages.filter(
           (message) => message.body !== action.value.body
-        ),
+        )
       }
     }
     case 'SERVER_UPDATE_CONVERSATION': {
@@ -128,7 +128,7 @@ function reducer(state: State, action: Action) {
             _.keyBy([action.value], 'id')
           )
         ),
-        conversation: action.value,
+        conversation: action.value
       }
     }
     case 'SERVER_UPDATE_MESSAGES_AND_CONVERSATIONS': {
@@ -149,7 +149,7 @@ function reducer(state: State, action: Action) {
             !action.messages.some(
               (message) => message.body === pendingMessage.body
             )
-        ),
+        )
       }
     }
     case 'CLIENT_NEW_MESSAGE': {
@@ -160,7 +160,7 @@ function reducer(state: State, action: Action) {
             _.keyBy(state.pendingMessages, 'localId'),
             _.keyBy([action.value], 'localId')
           )
-        ),
+        )
       }
     }
   }
@@ -171,8 +171,7 @@ export const ChatProvider: FC = ({ ...props }): JSX.Element => {
   const { visitor_id } = useVisitor()
   const [reconnectingInterval, setReconnectingInterval] =
     useState<NodeJS.Timeout>()
-
-  // if (business_id) Cookies.set('business_id', business_id.toString())
+  const apiOptions = { visitor: visitor_id }
 
   const sendMessage = (
     conversationKey: number,
@@ -186,11 +185,19 @@ export const ChatProvider: FC = ({ ...props }): JSX.Element => {
         localId,
         conversationKey,
         body: text,
-        isSending: true,
-      },
+        isSending: true
+      }
     })
-    return sendMessageApi(conversationKey, text, files)
+    return sendMessageApi({ conversationKey, text, files }, apiOptions)
   }
+
+  const startTyping = (conversationKey: number) =>
+    startTypingApi(conversationKey, apiOptions)
+
+  const markAsRead = (conversationKey: number) =>
+    markAsReadApi(conversationKey, apiOptions)
+
+  const newConversation = () => newConversationApi(apiOptions)
 
   const memoValue = useMemo(
     () => ({
@@ -198,21 +205,27 @@ export const ChatProvider: FC = ({ ...props }): JSX.Element => {
       sendMessage,
       startTyping,
       markAsRead,
-      newConversation,
+      newConversation
     }),
     [state]
   )
 
   const initializeSocket = useCallback(async () => {
     if (visitor_id) {
-      const conversations = (await getConversations()).data
+      const conversations = (await getConversationsApi(undefined, apiOptions))
+        .data
       const conversation =
         conversations && conversations.length > 0 ? conversations[0] : undefined
-      const messages: Message[] = conversation
-        ? (await getConversationMessages(conversation.uid)).data?.messages || []
-        : []
+      let messages: Message[] = []
+      if (conversation) {
+        await getConversationMessagesApi(
+          conversation.uid,
+          undefined,
+          apiOptions
+        ).then(({ data }) => (messages = data?.message || []))
+      }
 
-      let url = `${Config.API_URL}/ws/conversation/`
+      const url = `${Config.API_URL}/ws/conversation/`
         .concat(`?visitor=${visitor_id}`)
         .concat(`&api_key=${Config.API_KEY}`)
         .replace('http://', 'ws://')
@@ -244,7 +257,7 @@ export const ChatProvider: FC = ({ ...props }): JSX.Element => {
             dispatch({
               type: 'SERVER_UPDATE_MESSAGES_AND_CONVERSATIONS',
               messages: data.messages,
-              conversation: data.conversation,
+              conversation: data.conversation
             })
             break
           }
@@ -256,7 +269,7 @@ export const ChatProvider: FC = ({ ...props }): JSX.Element => {
         socket,
         conversations,
         conversation,
-        messages,
+        messages
       })
     }
   }, [visitor_id])
@@ -270,7 +283,7 @@ export const ChatProvider: FC = ({ ...props }): JSX.Element => {
       if (!reconnectingInterval)
         setReconnectingInterval(
           setInterval(() => {
-            console.log('reconnecting')
+            console.log(state.socket ? 'reconnecting' : 'connecting')
             initializeSocket()
           }, 5000)
         )
