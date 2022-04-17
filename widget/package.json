@@ -21,16 +21,17 @@
     "lodash": "file:../node_modules/lodash",
     "moment": "file:../node_modules/moment",
     "parcel": "^2.4.1",
-    "postcss": "file:../node_modules/postcss",
-    "postcss-flexbugs-fixes": "file:../node_modules/postcss-flexbugs-fixes",
-    "postcss-import": "file:../node_modules/postcss-import",
+    "postcss": "^8.4.6",
+    "postcss-flexbugs-fixes": "^5.0.2",
+    "postcss-import": "^14.1.0",
+    "postcss-preset-env": "^7.4.3",
     "react": "file:../node_modules/react",
+    "react-chat": "file:..",
     "react-dom": "file:../node_modules/react-dom",
     "react-icons": "^4.3.1",
     "react-scripts": "file:../node_modules/react-scripts",
     "tailwindcss": "^3.0.22",
-    "typescript": "file:../node_modules/typescript",
-    "react-chat": "file:.."
+    "typescript": "file:../node_modules/typescript"
   },
   "eslintConfig": {
     "extends": "../.eslintrc"
