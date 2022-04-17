@@ -2,12 +2,12 @@ import cn from 'clsx'
 import _ from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useRef, useState } from 'react'
-import { useChat } from '../../context'
+import { useChat } from 'react-chat'
 import {
   getStatusByMessage,
   isSameStatusByMessage,
   getEventsByConversation
-} from '../../utils'
+} from 'react-chat'
 import ChatBody from './ChatBody'
 import ChatHeader from './ChatHeader'
 

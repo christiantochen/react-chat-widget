@@ -1,16 +1,20 @@
 export type ConfigType = {
   API_URL: string
   API_KEY?: string | null
-  IS_PRODUCTION: boolean
 }
 
 const Config: ConfigType = {
-  API_URL: 'https://api.dev.goapp.co.id/v1',
-  IS_PRODUCTION: process.env.NODE_ENV === 'production'
+  API_URL: 'https://api.dev.goapp.co.id/v1'
 }
 
-export const setConfig = (apiKey: string | null) => {
-  Object.assign(Config, { ...Config, API_KEY: apiKey })
+export const initConfig = (config?: {
+  apiKey?: string | null
+  apiUrl?: string | null
+}) => {
+  Object.assign(Config, {
+    API_KEY: config?.apiKey,
+    API_URL: config?.apiUrl || 'https://api.dev.goapp.co.id/v1'
+  })
 }
 
 export default Config

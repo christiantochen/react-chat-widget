@@ -1,16 +1,19 @@
-import '../src/assets/main.css'
-import '../src/assets/chrome-bug.css'
+import './assets/main.css'
+import './assets/chrome-bug.css'
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { ChatProvider, VisitorProvider } from '../src/context'
-import { setConfig } from '../src/config'
-import { ChatWidget } from '../src/components'
+import { ChatProvider, VisitorProvider } from 'react-chat'
+import { initConfig } from 'react-chat'
+import { ChatWidget } from './components'
 
 const chatWidgetElement = document.querySelector('.react-chat-widget')
 
 if (chatWidgetElement) {
-  setConfig(chatWidgetElement.getAttribute('data-api-key'))
+  initConfig({
+    apiKey: chatWidgetElement.getAttribute('data-api-key'),
+    apiUrl: chatWidgetElement.getAttribute('data-api-url')
+  })
   ReactDOM.render(
     <React.StrictMode>
       <VisitorProvider>
