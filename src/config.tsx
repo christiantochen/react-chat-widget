@@ -1,19 +1,19 @@
-export type ConfigType = {
-  API_URL: string
-  API_KEY?: string | null
+type ConfigType = {
+  apiUrl: string
+  apiKey?: string | null
 }
 
 const Config: ConfigType = {
-  API_URL: 'https://api.dev.goapp.co.id/v1'
+  apiUrl: 'https://api.dev.goapp.co.id/v1'
 }
 
-export const initConfig = (config?: {
+export const setConfig = (config?: {
   apiKey?: string | null
   apiUrl?: string | null
 }) => {
   Object.assign(Config, {
-    API_KEY: config?.apiKey,
-    API_URL: config?.apiUrl || 'https://api.dev.goapp.co.id/v1'
+    apiKey: config?.apiKey || Config.apiKey,
+    apiUrl: config?.apiUrl || Config.apiUrl
   })
 }
 

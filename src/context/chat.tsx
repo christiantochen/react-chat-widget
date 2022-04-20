@@ -171,7 +171,6 @@ export const ChatProvider: FC = ({ ...props }): JSX.Element => {
   const { visitor_id } = useVisitor()
   const [reconnectingInterval, setReconnectingInterval] =
     useState<NodeJS.Timeout>()
-  const apiOptions = { visitor: visitor_id }
 
   const sendMessage = (
     conversationKey: number,
@@ -188,16 +187,15 @@ export const ChatProvider: FC = ({ ...props }): JSX.Element => {
         isSending: true
       }
     })
-    return sendMessageApi({ conversationKey, text, files }, apiOptions)
+    return sendMessageApi({ conversationKey, text, files })
   }
 
   const startTyping = (conversationKey: number) =>
-    startTypingApi(conversationKey, apiOptions)
+    startTypingApi(conversationKey)
 
-  const markAsRead = (conversationKey: number) =>
-    markAsReadApi(conversationKey, apiOptions)
+  const markAsRead = (conversationKey: number) => markAsReadApi(conversationKey)
 
-  const newConversation = () => newConversationApi(apiOptions)
+  const newConversation = () => newConversationApi()
 
   const memoValue = useMemo(
     () => ({
@@ -212,22 +210,19 @@ export const ChatProvider: FC = ({ ...props }): JSX.Element => {
 
   const initializeSocket = useCallback(async () => {
     if (visitor_id) {
-      const conversations = (await getConversationsApi(undefined, apiOptions))
-        .data
+      const conversations = (await getConversationsApi()).data
       const conversation =
         conversations && conversations.length > 0 ? conversations[0] : undefined
       let messages: Message[] = []
       if (conversation) {
-        await getConversationMessagesApi(
-          conversation.uid,
-          undefined,
-          apiOptions
-        ).then(({ data }) => (messages = data?.message || []))
+        await getConversationMessagesApi(conversation.uid).then(
+          ({ data }) => (messages = data?.message || [])
+        )
       }
 
-      const url = `${Config.API_URL}/ws/conversation/`
+      const url = `${Config.apiUrl}/ws/conversation/`
         .concat(`?visitor=${visitor_id}`)
-        .concat(`&api_key=${Config.API_KEY}`)
+        .concat(`&api_key=${Config.apiKey}`)
         .replace('http://', 'ws://')
         .replace('https://', 'wss://')
 

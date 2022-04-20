@@ -70,8 +70,8 @@ function request<T = any, E = any>(
     }
   }
 
-  if (config?.API_KEY) {
-    requestOptions.headers['X-API-Key'] = config.API_KEY
+  if (config?.apiKey) {
+    requestOptions.headers['X-API-Key'] = config.apiKey
   }
 
   if (requestOptions.body) {
@@ -82,7 +82,7 @@ function request<T = any, E = any>(
     }
   }
 
-  return fetch(`${config.API_URL}/${url}`, requestOptions)
+  return fetch(`${config.apiUrl}/${url}`, requestOptions)
     .then((...props) => jsonParser<T>(...props))
     .catch((e) => errorParser<T, E>(e))
 }

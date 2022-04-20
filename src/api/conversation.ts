@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie'
 import Config from '../config'
 import fetcher from '../lib/fetcher'
 
@@ -7,6 +8,7 @@ export const getConversations = (
 ) =>
   fetcher(`conversation/api/conversation/`)
     .setConfig(Config)
+    .setCookies(Cookies.get())
     .get({
       ...options,
       ...{ size: 20, offset: 0, ...filters }
@@ -18,6 +20,7 @@ export const getConversationDetail = (
 ) =>
   fetcher(`conversation/api/conversation/${conversationKey}/`)
     .setConfig(Config)
+    .setCookies(Cookies.get())
     .get({
       ...options
     })
@@ -29,6 +32,7 @@ export const getConversationMessages = (
 ) =>
   fetcher(`conversation/api/conversation/${conversationKey}/`)
     .setConfig(Config)
+    .setCookies(Cookies.get())
     .get({
       ...options,
       message_size: filters?.size || 20,
@@ -38,6 +42,7 @@ export const getConversationMessages = (
 export const newConversation = (options?: { visitor?: number }) =>
   fetcher(`conversation/api/conversation/start/`)
     .setConfig(Config)
+    .setCookies(Cookies.get())
     .setParams({ ...options })
     .post()
 
@@ -47,6 +52,7 @@ export const markAsRead = (
 ) =>
   fetcher(`conversation/api/conversation/${conversationKey}/read_all/`)
     .setConfig(Config)
+    .setCookies(Cookies.get())
     .setParams({ ...options })
     .post()
 
@@ -56,6 +62,7 @@ export const startTyping = (
 ) =>
   fetcher(`conversation/api/conversation/${conversationKey}/start_typing/`)
     .setConfig(Config)
+    .setCookies(Cookies.get())
     .setParams({ ...options })
     .post()
 
@@ -79,6 +86,7 @@ export const sendMessage = (
 
   return fetcher(`conversation/api/message/send/`)
     .setConfig(Config)
+    .setCookies(Cookies.get())
     .setParams({
       ...options,
       conversation: conversationKey

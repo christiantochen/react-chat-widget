@@ -1,23 +1,24 @@
+import Cookies from 'js-cookie'
 import React, { FC, useEffect, useMemo } from 'react'
 import { init, logEvent as logEventApi, register } from '../api'
 
 interface State {
-  _goid?: number
-  visitor_id?: number
+  _goid?: string
+  visitor_id?: string
   // eslint-disable-next-line no-unused-vars
   logEvent: (name: string, data: any) => Promise<any>
 }
 
 const initialState = {
-  _goid: undefined,
-  visitor_id: undefined,
+  _goid: Cookies.get('_goid'),
+  visitor_id: Cookies.get('visitor_id'),
   // eslint-disable-next-line no-unused-vars
   logEvent: (name: string, data: any) => Promise.resolve({})
 }
 
 type Action =
-  | { type: 'SET_GOID'; value?: number }
-  | { type: 'SET_VISITOR_ID'; value?: number }
+  | { type: 'SET_GOID'; value?: string }
+  | { type: 'SET_VISITOR_ID'; value?: string }
 
 export const VisitorContext = React.createContext<State>(initialState)
 VisitorContext.displayName = 'VisitorContext'
@@ -26,12 +27,24 @@ function visitorReducer(state: State, action: Action) {
   console.log(action)
   switch (action.type) {
     case 'SET_GOID': {
+      if (action.value)
+        Cookies.set('_goid', action.value, {
+          sameSite: 'lax',
+          httpOnly: false,
+          secure: true
+        })
       return {
         ...state,
         _goid: action.value
       }
     }
     case 'SET_VISITOR_ID': {
+      if (action.value)
+        Cookies.set('visitor_id', action.value, {
+          sameSite: 'lax',
+          httpOnly: false,
+          secure: true
+        })
       return {
         ...state,
         visitor_id: action.value
@@ -43,8 +56,7 @@ function visitorReducer(state: State, action: Action) {
 export const VisitorProvider: FC = (props): JSX.Element => {
   const [state, dispatch] = React.useReducer(visitorReducer, initialState)
 
-  const logEvent = (name: string, data: any) =>
-    logEventApi({ name, data }, { visitor_id: state.visitor_id })
+  const logEvent = (name: string, data: any) => logEventApi({ name, data })
 
   const memoValue = useMemo(
     () => ({
@@ -65,7 +77,8 @@ export const VisitorProvider: FC = (props): JSX.Element => {
     }
 
     init(visitor).then(
-      ({ ok, data }) => ok && dispatch({ type: 'SET_GOID', value: data._goid })
+      ({ ok, data }) =>
+        ok && dispatch({ type: 'SET_GOID', value: data._goid.toString() })
     )
   }, [])
 
@@ -73,9 +86,13 @@ export const VisitorProvider: FC = (props): JSX.Element => {
     if (state._goid) {
       const visitor = { _goid: state._goid }
 
-      register(visitor, { visitor_id: state.visitor_id }).then(
+      register(visitor).then(
         ({ ok, data }) =>
-          ok && dispatch({ type: 'SET_VISITOR_ID', value: data.visitor_id })
+          ok &&
+          dispatch({
+            type: 'SET_VISITOR_ID',
+            value: data.visitor_id.toString()
+          })
       )
     }
   }, [state._goid])
